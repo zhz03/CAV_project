@@ -6,13 +6,16 @@ import os
 def single_file_output(CSVfile_abs_path,target_path):
     # CSVfile = '/media/carma/easystore8/2nd deployment/Day11/CSV/Tesla_CAV_2022_01_31_104428_cavgt.csv'
     # target_path = './csv_dataset/'
-    CSV_paths = CSVfile.split('/')
+    CSV_paths = CSVfile_abs_path.split('/')
     file_name = CSV_paths[-1]
     file_path = target_path + CSV_paths[-3] + '/' + CSV_paths[-2] + '/'
+    print('-'*20)
+    print(file_path)
     
     if not os.path.exists(file_path):
         os.makedirs(file_path)
-        
+        print('make a new path')
+    
     CAV = pd.read_csv(CSVfile_abs_path)
     #CAV_old = pd.read_csv(file_old)
     rows,columns = len(CAV.axes[0]),len(CAV.axes[1])
@@ -86,16 +89,33 @@ def single_file_output(CSVfile_abs_path,target_path):
     file.close()
     print(file_path + file_name)
     print("Process Done")
-
-        
     
-if __name__ == "__main__":
-    CSVfile = '/home/zhaoliang/Data_ZZL/mobility_lab/CAV_project/data/Day11/CSV/Tesla_CAV_2022_01_31_104428_cavgt.csv'
-    target_path = './csv_dataset/'
-    data_path = '/home/zhaoliang/Data_ZZL/mobility_lab/CAV_project/2nd deployment'
+
+def batch_files(data_path,target_path):
     dayfolder_list = []
     for subfolder in os.listdir(data_path):
         if subfolder[:3] == 'Day':
             dayfolder_list.append(subfolder)
-    # single_file_output(CSVfile,target_path)
     
+    for i,item in enumerate(dayfolder_list):
+        dayfolder = data_path + item + '/CSV/'
+        for sub_file in os.listdir(dayfolder):
+            if sub_file[:5] == 'Tesla':
+                # print(sub_file)
+                CSVfile_abs_path = dayfolder + sub_file
+                single_file_output(CSVfile_abs_path,target_path)
+                # print(CSVfile_abs_path)
+        print(item + ' is finish!!!')
+    
+if __name__ == "__main__":
+    CSVfile = '/home/zhaoliang/Data_ZZL/mobility_lab/CAV_project/data/Day11/CSV/Tesla_CAV_2022_01_31_104428_cavgt.csv'
+    
+    target_path = './csv_dataset/' # local folder 
+    
+    data_path = '/home/zhaoliang/Data_ZZL/mobility_lab/CAV_project/2nd deployment/'
+    
+    batch_files(data_path,target_path)
+                
+    # single_file_output(CSVfile,target_path)
+    # file_path = './csv_dataset/Day12/'
+    # print(os.path.exists(file_path))
